@@ -55,7 +55,6 @@ module RVideo # :nodoc:
       if /Unknown format/i.match(@raw_response) || metadata.nil?
         @unknown_format = true
       elsif /Duration: N\/A/im.match(@raw_response)
-#      elsif /Duration: N\/A|bitrate: N\/A/im.match(@raw_response)
         @unreadable_file = true
         @raw_metadata = metadata[1] # in this case, we can at least still get the container type
       else
@@ -294,6 +293,14 @@ module RVideo # :nodoc:
 
       units = raw_duration.split(":")
       (units[0].to_i * 60 * 60 * 1000) + (units[1].to_i * 60 * 1000) + (units[2].to_f * 1000).to_i
+    end
+
+
+    # The DateTime the video was recorded
+    def created_on
+      return nil unless valid?
+
+      /creation_time\s*\:\s*([\d\s:-]+)/.match(@raw_metadata)[1].try(:strip)
     end
 
     #
